@@ -1,0 +1,1 @@
+# Face-and-Emotion-recognition-in-r-with-the-use-of-Microsoft-s-Face-and-Emotion-API-
