@@ -19,7 +19,9 @@ library(grid) # for the raster function
 ##### PREDICT EMOTION
 
 # Provide your own FACE and EMOTION API keys after registering for a free account on https://azure.microsoft.com/en-us/services/cognitive-services/face/
-predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), emotion_key = '...', face_key = '...') {
+predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), 
+                           emotion_key = '...', 
+                           face_key = '...') {
   # Define image
   mybody = list(url = url)
   
