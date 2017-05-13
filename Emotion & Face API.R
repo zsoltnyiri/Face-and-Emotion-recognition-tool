@@ -1,23 +1,25 @@
 ### Load relevant packages
-install.packages('httr')
-install.packages('XML')
-install.packages('stringr')
-install.packages('ggplot2')
-install.packages('Kmisc')
-install.packages('jpeg')
-install.packages('Rmisc')
+
+# install.packages('httr')
+# install.packages('XML')
+# install.packages('stringr')
+# install.packages('ggplot2')
+# install.packages('Kmisc')
+# install.packages('jpeg')
+# install.packages('Rmisc')
 library(httr)
 library(XML)
 library(stringr)
-library(ggplot2)
+library(ggplot2) # for plotting
 library(Kmisc)
-library(jpeg)
-library(Rmisc) # igy nem kell multiplot
-library(grid)
+library(jpeg) # for importing jpegs
+library(Rmisc) # for multiplot function
+library(grid) # for the raster function
 
 ##### PREDICT EMOTION
 
-predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), emotion_key = 'e84596b3f9b64377904e2e896dde8f42', face_key = 'a79c66ae113f44a6857fbf10ba0bede5') {
+# Provide your own FACE and EMOTION API keys after registering for a free account on https://azure.microsoft.com/en-us/services/cognitive-services/face/
+predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), emotion_key = '...', face_key = '...') {
   # Define image
   mybody = list(url = url)
   
@@ -33,7 +35,7 @@ predict_emotion = function(url = readline(prompt = "Please define the image sour
   )
   # Request results
   emotion_results = httr::content(faceEMO)[[1]]
-  # Transform and prepair the results
+  # Transform and prepare the results
   options(scipen = 999) 
   df_emotion_results = as.data.frame(as.matrix(emotion_results$scores))
   df_emotion_results$V1 = as.numeric(df_emotion_results$V1)*100
