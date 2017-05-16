@@ -1,4 +1,4 @@
-### Load relevant packages
+### Install required packages if needed
 
 # install.packages('httr')
 # install.packages('XML')
@@ -10,7 +10,8 @@
 
 ##### PREDICT EMOTION
 
-# Provide your own FACE and EMOTION API keys after registering for a free account at https://azure.microsoft.com/en-us/services/cognitive-services/face/
+# Provide your own FACE and EMOTION API keys after registering for a free account at 
+# https://azure.microsoft.com/en-us/services/cognitive-services/face/
 predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), 
                            emotion_key = '...', 
                            face_key = '...')
