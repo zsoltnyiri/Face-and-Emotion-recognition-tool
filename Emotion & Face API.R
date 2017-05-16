@@ -7,21 +7,16 @@
 # install.packages('Kmisc')
 # install.packages('jpeg')
 # install.packages('Rmisc')
-library(httr)
-library(XML)
-library(stringr)
-library(ggplot2) # for plotting
-library(Kmisc)
-library(jpeg) # for importing jpegs
-library(Rmisc) # for multiplot function
-library(grid) # for the raster function
 
 ##### PREDICT EMOTION
 
-# Provide your own FACE and EMOTION API keys after registering for a free account on https://azure.microsoft.com/en-us/services/cognitive-services/face/
+# Provide your own FACE and EMOTION API keys after registering for a free account at https://azure.microsoft.com/en-us/services/cognitive-services/face/
 predict_emotion = function(url = readline(prompt = "Please define the image source (url): "), 
                            emotion_key = '...', 
-                           face_key = '...') {
+                           face_key = '...')
+{
+  # Load relevant packages
+  lapply(c('httr', 'XML', 'stringr', 'ggplot2', 'Kmisc', 'jpeg', 'Rmisc', 'grid'), require, character.only = T)
   # Define image
   mybody = list(url = url)
   
@@ -76,7 +71,7 @@ predict_emotion = function(url = readline(prompt = "Please define the image sour
     ylab('%') +
     theme(plot.title = element_text(hjust = 0.5)) +
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
-  # Show both plots in 1 figure
+  # Show both plots in one figure
   multiplot = multiplot(pic_plot, plot, cols = 2)
   # Remove the downloaded picture
   file.remove('host_pic.jpg')
