@@ -69,7 +69,12 @@ server = function(input, output, clientData, session) {
     )
     # Request results
     emotion_results = httr::content(faceEMO)[[1]]
-    emotion_results
+    # Transformation
+    df_emotion_results = as.data.frame(as.matrix(emotion_results$scores))
+    df_emotion_results$V1 = as.numeric(df_emotion_results$V1)*100
+    colnames(df_emotion_results)[1] = "Level"
+    df_emotion_results$Emotion = rownames(df_emotion_results)  
+    df_emotion_results
   })
   
   face_data = reactive({
@@ -102,13 +107,8 @@ server = function(input, output, clientData, session) {
   
   output$hist = renderPlot({
     data = emotion_data()
-    # Transform and prepare the results
-    df_emotion_results = as.data.frame(as.matrix(data$scores))
-    df_emotion_results$V1 = as.numeric(df_emotion_results$V1)*100
-    colnames(df_emotion_results)[1] = "Level"
-    df_emotion_results$Emotion = rownames(df_emotion_results)
     # Plot the predicted data
-    ggplot(data = df_emotion_results, aes(x = Emotion, y = Level, fill = Emotion)) +
+    ggplot(data = data, aes(x = Emotion, y = Level, fill = Emotion)) +
       geom_bar(stat = 'identity') + 
       ylab('%') +
       theme(plot.title = element_text(hjust = 0.5)) +
@@ -117,12 +117,7 @@ server = function(input, output, clientData, session) {
   
   output$data = renderTable({
     data = emotion_data()
-    # Transform and prepare the results
-    df_emotion_results = as.data.frame(as.matrix(data$scores))
-    df_emotion_results$V1 = as.numeric(df_emotion_results$V1)*100
-    colnames(df_emotion_results)[1] = "Level"
-    df_emotion_results$Emotion = rownames(df_emotion_results)  
-    df_emotion_results
+    data
   })
   
   output$age = renderText({
