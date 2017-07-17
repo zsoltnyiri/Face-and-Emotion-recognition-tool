@@ -1,5 +1,4 @@
 library(shiny)
-library(jpeg)
 library(httr)
 library(XML)
 library(stringr)
@@ -9,6 +8,7 @@ library(jpeg)
 library(Rmisc)
 library(grid)
 library(highcharter)
+require(rCharts)
 
 options(scipen = 999)
 options(shiny.trace = F)
@@ -29,7 +29,7 @@ ui = shinyUI(fluidPage(
                 label = 'Select an Image',
                 multiple = F,
                 accept=c('image/png', 'image/jpeg'))
-      ),
+    ),
     # main panel elements
     mainPanel(
       tabsetPanel(
@@ -37,11 +37,12 @@ ui = shinyUI(fluidPage(
                  fluidRow(
                    br(),
                    column(12, align = "center", h3(textOutput("age")))),
-                   br(),
-                   fluidRow(
-                    column(6, plotOutput("pic")),
-                    column(6, plotOutput("hist"))
-                 )), 
+                 br(),
+                 fluidRow(
+                   column(6, plotOutput("pic")),
+                  # column(6, plotOutput("hist")),
+                   column(6, showOutput("hist2", "Highcharts"))
+                 )),  
         tabPanel("Raw Data", tableOutput("data"))
       )
     )
@@ -49,7 +50,7 @@ ui = shinyUI(fluidPage(
 ))
 
 server = function(input, output, clientData, session) {
-
+  
   # Saves the uploaded item onto a selected place  
   # observeEvent(input$files, {
   #   inFile <- input$files
@@ -115,6 +116,14 @@ server = function(input, output, clientData, session) {
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
   })
   
+  output$hist2 = renderChart2({
+    data = emotion_data()
+    h1 <- Highcharts$new()
+    h1$chart(type = "column")
+    h1$series(data = data$Level)
+    return(h1)
+      })
+  
   output$data = renderTable({
     data = emotion_data()
     data
@@ -125,7 +134,7 @@ server = function(input, output, clientData, session) {
     # Extract the predicted age & concatenate with a string to serve as a dinamic plot title
     paste('Predicted age: ', data$faceAttributes[[1]])
   })
-
+  
 }
 
 # Authentication
