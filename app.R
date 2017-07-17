@@ -9,6 +9,7 @@ library(Rmisc)
 library(grid)
 library(highcharter)
 require(rCharts)
+library(plotly)
 
 options(scipen = 999)
 options(shiny.trace = F)
@@ -41,7 +42,7 @@ ui = shinyUI(fluidPage(
                  fluidRow(
                    column(6, plotOutput("pic")),
                   # column(6, plotOutput("hist")),
-                   column(6, showOutput("hist2", "Highcharts"))
+                   column(6, plotlyOutput("plotly"))
                  )),  
         tabPanel("Raw Data", tableOutput("data"))
       )
@@ -123,6 +124,12 @@ server = function(input, output, clientData, session) {
     h1$series(data = data$Level)
     return(h1)
       })
+  
+  output$plotly = renderPlotly({
+    data = emotion_data()
+    axis = list(title = (""))
+    plot_ly(data, type = "bar", x = ~Emotion, y = ~Level, color = ~Emotion) %>% layout(xaxis = axis, yaxis = axis)
+  })
   
   output$data = renderTable({
     data = emotion_data()
