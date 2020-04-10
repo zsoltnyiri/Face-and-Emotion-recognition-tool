@@ -9,6 +9,7 @@ library(jpeg)
 library(Rmisc)
 library(grid)
 library(highcharter)
+library(plotly)
 
 options(scipen = 999)
 options(shiny.trace = F)
@@ -21,7 +22,7 @@ ui = shinyUI(fluidPage(
   sidebarLayout(
     # sidebar elements
     sidebarPanel(
-      textInput("url", "Paste an Image URL", value = 'http://thelala.com/wp-content/uploads/2016/03/rtr4yevj_0.jpg', placeholder ='http://thelala.com/wp-content/uploads/2016/03/rtr4yevj_0.jpg'),
+      textInput("url", "Paste an Image URL", value = 'https://www.biography.com/.image/t_share/MTU1MDE2MzU4OTIzMzQ3MDYy/gigi-hadid-appears-backstage-at-the-2015-muchmusic-video-awards-at-muchmusic-hq-on-june-21-2015-in-toronto-canada-photo-by-george-pimentel_wireimage-square.jpg', placeholder ='https://www.biography.com/.image/t_share/MTU1MDE2MzU4OTIzMzQ3MDYy/gigi-hadid-appears-backstage-at-the-2015-muchmusic-video-awards-at-muchmusic-hq-on-june-21-2015-in-toronto-canada-photo-by-george-pimentel_wireimage-square.jpg'),
       print("or"),
       br(),
       br(),
@@ -29,7 +30,7 @@ ui = shinyUI(fluidPage(
                 label = 'Select an Image',
                 multiple = F,
                 accept=c('image/png', 'image/jpeg'))
-      ),
+    ),
     # main panel elements
     mainPanel(
       tabsetPanel(
@@ -37,10 +38,10 @@ ui = shinyUI(fluidPage(
                  fluidRow(
                    br(),
                    column(12, align = "center", h3(textOutput("age")))),
-                   br(),
-                   fluidRow(
-                    column(6, plotOutput("pic")),
-                    column(6, plotOutput("hist"))
+                 br(),
+                 fluidRow(
+                   column(6, plotOutput("pic")),
+                   column(6, plotlyOutput("hist"))
                  )), 
         tabPanel("Raw Data", tableOutput("data"))
       )
@@ -49,46 +50,32 @@ ui = shinyUI(fluidPage(
 ))
 
 server = function(input, output, clientData, session) {
-
-  # Saves the uploaded item onto a selected place  
-  # observeEvent(input$files, {
-  #   inFile <- input$files
-  #   if (is.null(inFile))
-  #     return()
-  #   file.copy(inFile$datapath, file.path('C:\\Users\\zsolt\\Documents\\', inFile$name) )
-  # })
   
-  emotion_data = reactive({
-    url = input$url
-    mybody = list(url = url)
-    faceEMO = POST(
-      url = emotion_url,
-      content_type('application/json'), add_headers(.headers = c('Ocp-Apim-Subscription-Key' = emotion_key)),
-      body = mybody,
-      encode = 'json'
-    )
-    # Request results
-    emotion_results = httr::content(faceEMO)[[1]]
-    # Transformation
-    df_emotion_results = as.data.frame(as.matrix(emotion_results$scores))
-    df_emotion_results$V1 = as.numeric(df_emotion_results$V1)*100
-    colnames(df_emotion_results)[1] = "Level"
-    df_emotion_results$Emotion = rownames(df_emotion_results)  
-    df_emotion_results
-  })
+   # #Saves the uploaded item onto a selected place
+   #  observeEvent(input$files, {
+   #    inFile <- input$files
+   #    if (is.null(inFile))
+   #      return()
+   #    file.copy(inFile$datapath, file.path(getwd()), inFile$name)
+   #  })
   
   face_data = reactive({
     url = input$url
     mybody = list(url = url)
     faceResponse = POST(
       url = face_url, 
-      content_type('application/json'), add_headers(.headers = c('Ocp-Apim-Subscription-Key' = face_key)),
+      content_type('application/json'), 
+      add_headers(.headers = c('Ocp-Apim-Subscription-Key' = face_key)),
       body = mybody,
       encode = 'json'
     )
-    # Request results
-    face_results = httr::content(faceResponse)[[1]]
-    face_results
+    face_data = httr::content(faceResponse)[[1]]
+    emotions = as.data.frame(as.matrix(face_data$faceAttributes$emotion))
+    age = as.data.frame(as.matrix(face_data$faceAttributes$age))
+    colnames(age) = 'age'
+    age = t(age)
+    face_df = rbind(emotions, age)
+    face_df
   })
   
   output$pic = renderPlot({
@@ -101,38 +88,48 @@ server = function(input, output, clientData, session) {
     qplot(geom ='blank') +
       annotation_custom(raster, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
       geom_point()
-    # Remove the downloaded picture
-    # file.remove('host_pic.jpg')
+    #Remove the downloaded picture
+    #file.remove('host_pic.jpg')
   })
-  
-  output$hist = renderPlot({
-    data = emotion_data()
+
+  output$hist = renderPlotly({
+    data = face_data()
+    data = data[-nrow(data),]
+    data = as.data.frame(as.matrix(data))
+    data$V1 = as.numeric(data$V1)*100
+    colnames(data)[1] = "Level"
+    data$Emotion = rownames(data)
     # Plot the predicted data
-    ggplot(data = data, aes(x = Emotion, y = Level, fill = Emotion)) +
-      geom_bar(stat = 'identity') + 
-      ylab('%') +
-      theme(plot.title = element_text(hjust = 0.5)) +
-      theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+    plot_ly(
+      data = data,
+      x = ~Emotion,
+      y = ~Level,
+      color = ~Emotion,
+      type = "bar")
   })
   
   output$data = renderTable({
-    data = emotion_data()
+    data = face_data()
+    data = data[-nrow(data),]
+    data = as.data.frame(as.matrix(data))
+    data$V1 = as.numeric(data$V1)*100
+    colnames(data)[1] = "Level"
+    data$Emotion = rownames(data)
     data
   })
   
   output$age = renderText({
     data = face_data()
+    data = as.numeric(data[9,][1])
     # Extract the predicted age & concatenate with a string to serve as a dinamic plot title
-    paste('Predicted age: ', data$faceAttributes[[1]])
+    paste('Predicted age: ', data)
   })
-
+  
 }
 
 # Authentication
-emotion_key = 'e84596b3f9b64377904e2e896dde8f42'
 face_key = 'a79c66ae113f44a6857fbf10ba0bede5'
 
-face_url = "https://api.projectoxford.ai/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=true&returnFaceAttributes=age"
-emotion_url = 'https://api.projectoxford.ai/emotion/v1.0/recognize'
+face_url = 'https://api.projectoxford.ai//face/v1.0/detect?returnFaceAttributes=age,emotion'
 
 shinyApp(ui = ui, server = server)
