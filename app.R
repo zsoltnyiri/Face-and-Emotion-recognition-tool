@@ -128,7 +128,7 @@ server = function(input, output, clientData, session) {
 }
 
 # Authentication
-face_key = 'a79c66ae113f44a6857fbf10ba0bede5'
+face_key = 'your key here'
 
 face_url = 'https://api.projectoxford.ai//face/v1.0/detect?returnFaceAttributes=age,emotion'
 
