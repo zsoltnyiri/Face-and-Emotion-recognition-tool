@@ -1,6 +1,6 @@
 ## Face and emotion recognition app
 
-An R Shiny application hosted on shiny.io utilizing Microsoft's free Face API. For authentication it uses shinyauthR and sodium to hash to login credentials.
+An R Shiny application hosted on shiny.io utilizing Microsoft's free Face API. For authentication it uses shinyauthR and sodium to hash to login credentials. Plotting is done in Plotly.
 
 ![Authentication](/cred_sample.JPG)
 
