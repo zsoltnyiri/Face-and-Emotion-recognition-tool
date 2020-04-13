@@ -8,6 +8,6 @@ Just paste a url into the box, or upload any pictures to predict the age and emo
 
 ![Sample usage](/sample.JPG)
 
-Limitation: currently it can only handle a single input (aka. 1 face) per picture, although it can be easily expanded later, should there be a need.
+Limitations: currently it can only handle a single input (aka. 1 face) per picture, although it can be easily expanded later, should there be a need.
 
 It can be accessed [here.](https://zsoltnyiri.shinyapps.io/Face_app/)
