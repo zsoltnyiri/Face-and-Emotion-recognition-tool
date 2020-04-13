@@ -7,7 +7,7 @@ An [__R Shiny__](https://shiny.rstudio.com/) application hosted on shiny.io util
 Just paste a url into the box, or upload any pictures to predict the age and emotions on the face present. 
 
 ![Sample usage](/sample.JPG)
-*Sample picture is provided by https://www.thispersondoesnotexist.com/, therefore it doesn't exist, so no privacy rights have been violated.*
+*Sample picture is provided by https://www.thispersondoesnotexist.com/, therefore it doesn't exist, hence fully GDPR compliant.*
 
 __Limitations__: currently it can only handle a single input (aka. 1 face) per picture, although it can be easily expanded later, should there be a need.
 
