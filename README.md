@@ -1,7 +1,11 @@
 ## Face and emotion recognition app
 
-This is a small R Shiny application hosted on shiny.io utilizing Microsoft's free Face API.
+An R Shiny application hosted on shiny.io utilizing Microsoft's free Face API. For authentication it uses shinyauthR and sodium to hash to login credentials.
 
-Copy a link into the box, or upload any pictures to predict the age and emotions on the face present.
+![Authentication](/cred_sample.jpg)
 
-Try at: https://zsoltnyiri.shinyapps.io/Face_app/
+Just past a url into the box, or upload any pictures to predict the age and emotions on the face present. 
+
+Limitation: currently it can only handle a single input (aka. 1 face) per picture, although it can be easily expanded later, should there be a need.
+
+It can be accessed [here.](https://zsoltnyiri.shinyapps.io/Face_app/)
