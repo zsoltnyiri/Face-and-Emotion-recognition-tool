@@ -2,9 +2,11 @@
 
 An R Shiny application hosted on shiny.io utilizing Microsoft's free Face API. For authentication it uses shinyauthR and sodium to hash to login credentials.
 
-![Authentication](/cred_sample.jpg)
+![Authentication](/cred_sample.JPG)
 
-Just past a url into the box, or upload any pictures to predict the age and emotions on the face present. 
+Just paste a url into the box, or upload any pictures to predict the age and emotions on the face present. 
+
+![Sample usage](/test.jpg)
 
 Limitation: currently it can only handle a single input (aka. 1 face) per picture, although it can be easily expanded later, should there be a need.
 
